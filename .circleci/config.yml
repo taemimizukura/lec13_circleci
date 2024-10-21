@@ -52,10 +52,6 @@ jobs:
           name: Execute Ansible Playbook
           command: |
             ansible-playbook -i ansible/inventory ansible/playbook.yml --private-key $SSH_PRIVATE_KEY_PATH
-      - run:
-          name: Setup AWS CLI
-          command: |
-            aws configure set region $AWS_DEFAULT_REGION
 
   execute-serverspec:
     executor: ruby/default
