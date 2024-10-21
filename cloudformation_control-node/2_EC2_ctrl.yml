@@ -15,6 +15,7 @@ Parameters:
   
   ExistingEIP: #コントロールノード用の既存のEIPを入力する
     Description: The existing Elastic IP for ControlNode
+    Type: String
     Default: 54.64.20.148
     
 Resources:
