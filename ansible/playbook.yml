@@ -6,7 +6,11 @@
     db_user: "{{ (lookup('env','RDS_ID')) }}"
     db_pw: "{{ (lookup('env','RDS_PASSWORD')) }}"
     S3_bucket: "{{ lookup('env','S3_BUCKET') }}"
+    access_key_id: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+    secret_access_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+    region: "{{ lookup('env','AWS_DEFAULT_REGION') }}"
     ssh_private_key_path: "{{ lookup('env','SSH_PRIVATE_KEY' ) }}"
+    
 
   roles:
     - { role: 01_setup }

@@ -1,11 +1,17 @@
---- 
+---
 - name: Install NVM
-  shell: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-  args:
-    executable: /bin/bash
+  get_url:
+    url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh
+    dest: /tmp/nvm_install.sh
+    mode: 'u+x'
+
+- name: Run NVM installation script
+  shell: /bin/bash /tmp/nvm_install.sh
 
 - name: Load NVM
   shell: . ~/.nvm/nvm.sh
+  register: nvm_loaded
+  changed_when: false  # NVMのロードは変更を伴わないので、変更フラグをfalseに設定
 
 - name: Install Node.js 17.9.1
   shell: . ~/.nvm/nvm.sh && nvm install 17.9.1
