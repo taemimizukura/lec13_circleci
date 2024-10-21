@@ -1,0 +1,36 @@
+---   
+- name: Remove MariaDB packages
+  yum:
+    name: mariadb-server
+    state: absent
+
+- name: Install MySQL development package
+  yum:
+    name: mysql-devel
+    state: present
+  become: yes
+
+- name: Install MySQL client
+  yum:
+    name: mysql
+    state: present
+
+- name: 'Run bundle install'
+  shell: bash -lc "bundle install"
+  args:
+    chdir: "{{ app_dir }}"
+  ignore_errors: yes
+
+- name: 'Create database.yml from template'
+  template:
+    src: database.yml.j2
+    dest: "{{ app_dir }}/config/database.yml"
+
+- name: Edit /etc/my.cnf
+  become: yes
+  template:
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: '0644'

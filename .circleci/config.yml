@@ -1,0 +1,90 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@4.2.3
+  ruby: circleci/ruby@2.2.1
+  ansible-playbook: orbss/ansible-playbook@0.0.5
+  aws-cloudformation: orbss/aws-cloudformation@0.1.6
+  python: circleci/python@2.0.3
+
+jobs:
+  cfn-lint:
+    executor: python/default
+    steps:
+      - checkout
+      - run: pip install cfn-lint
+      - run:
+          name: Run cfn-lint for CloudFormation
+          command: cfn-lint -i W3002 -t cloudformation/*.yml
+
+  execute-cloudformation:
+    docker:
+      - image: amazon/aws-cli:latest
+    steps:
+      - checkout
+      - aws-cli/setup:
+          region: AWS_DEFAULT_REGION
+      - run:
+          name: Deploy to AWS from template
+          command: aws cloudformation deploy --template-file cloudformation/2_RDS_S3.yml --stack-name Lec13-RDS-S3
+
+  execute-ansible:
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - checkout
+      - run:
+          name: Install Ansible
+          command: |
+            pip install ansible
+      - run:
+          name: Add host key to known_hosts
+          command: |
+           ssh-keyscan -H 18.180.2.113 >> ~/.ssh/known_hosts
+           chmod 600 ~/.ssh/known_hosts
+
+      - run:
+          name: Execute Ansible Playbook
+          command: ansible-playbook .ansible/playbook.yml -i .ansible/inventory
+      - checkout
+      - aws-cli/setup:
+          region: AWS_DEFAULT_REGION
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:4FHjhuVlFUKbXS8PtXn9iudtugfViiFpOzfjCsSYv4g"
+
+      - run:
+          name: Run Ansible Playbook
+          command: |
+            ansible-playbook -i .ansible/inventory .ansible/playbook.yml --private-key ~/.ssh/id_rsa
+
+  execute-serverspec:
+    executor: ruby/default
+    steps:
+      - checkout
+      - ruby/install:
+          version: 3.2.3
+      - run:
+          name: "Install serverspec"
+          command: |
+            gem install serverspec
+      - run:
+          name: "Execute serverspec"
+          command: |
+           cd serverspec
+           rake spec
+
+workflows:
+  version: 2
+  lec13-workflow:
+    jobs:
+      - cfn-lint
+      - execute-cloudformation:
+          requires:
+            - cfn-lint
+      - execute-ansible:
+          requires:
+            - execute-cloudformation
+      - execute-serverspec:
+          requires:
+            - execute-ansible

@@ -1,0 +1,201 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  NameBase:
+    Description: This is the base name.
+    Type: String
+    Default: lec13-target
+  
+  MyKeyPair:
+    Description: The EC2 Key Pair to allow SSH access to the instance
+    Type: AWS::EC2::KeyPair::KeyName
+  
+  MyIP:
+    Description: IP address allowed to access EC2
+    Type: String
+
+  ControlNodeIP:
+    Description: SSH access from control node #コントロールノードのIPアドレス
+    Type: String
+    Default: 54.64.20.148
+  
+  ExistingEIP: #ターゲットノード用の既存のEIPを入力する
+    Description: The existing Elastic IP for targetnode
+    Type: String
+    Default: 18.180.2.113
+
+Resources:
+#--------------------------------------------------------#         
+# EC2
+#--------------------------------------------------------#
+  MyEC2Instance2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: !Ref MyKeyPair
+      SecurityGroupIds:
+        - !Ref EC2SecurityGroupTarget
+      ImageId: ami-0d889f77081190db1
+      SubnetId: !ImportValue PublicSubnet01
+      IamInstanceProfile: !Ref InstanceProfile
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          sudo yum update -y
+          sudo yum install git -y
+
+      Tags:
+        - Key: Name
+          Value: !Sub ec2-${NameBase}
+
+#--------------------------------------------------------#
+# Elastic IP Association
+#--------------------------------------------------------#
+  ElasticIPAssociation: #既存のEIPを使用する
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      InstanceId: !Ref MyEC2Instance2
+      EIP: !Ref ExistingEIP
+
+#--------------------------------------------------------#
+# Security Group for EC2
+#--------------------------------------------------------#
+  EC2SecurityGroupTarget:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for EC2
+      GroupName: !Sub ${NameBase}-ec2-sg
+      VpcId: !ImportValue MyVpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80  
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP Access Permission
+
+        - IpProtocol: tcp
+          FromPort: 22    #SSH
+          ToPort: 22
+          CidrIp: !Sub ${ControlNodeIP}/32
+          Description: Allow SSH access from control node
+
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Sub ${MyIP}/32
+          Description: Alow SSH access from local
+
+        - IpProtocol: tcp
+          FromPort: 3000  
+          ToPort: 3000 
+          CidrIp: 0.0.0.0/0
+          Description: Port 3000 permission for apps
+
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          
+      Tags:
+        - Key: Name
+          Value: !Sub ${NameBase}-ec2-sg
+
+#--------------------------------------------------------#
+# ALB(Application Load Balancer)
+#--------------------------------------------------------#
+  MyALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub ${NameBase}-alb
+      Subnets:
+        - !ImportValue PublicSubnet01
+        - !ImportValue PublicSubnet02
+      SecurityGroups:
+        - !Ref ELBSecurityGroup
+      Scheme: internet-facing
+      Type: application
+      Tags:
+        - Key: Name
+          Value: !Sub ${NameBase}-alb
+
+  MyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub ${NameBase}-tg
+      Port: 80
+      Protocol: HTTP
+      VpcId: !ImportValue MyVpc
+      HealthCheckIntervalSeconds: 30
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: traffic-port
+      HealthCheckPath: /
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 5
+      UnhealthyThresholdCount: 2
+      TargetType: instance
+      Targets:
+        - Id: !Ref MyEC2Instance2
+      Tags:
+        - Key: Name
+          Value: !Sub ${NameBase}-tg
+
+  MyALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MyTargetGroup
+      LoadBalancerArn: !Ref MyALB
+      Port: 80
+      Protocol: HTTP
+
+  ELBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for ELB(Elastic Load Balancer)
+      GroupName: !Sub ${NameBase}-elb-sg
+      VpcId: !ImportValue MyVpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref ExistingEIP
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub ${NameBase}-elb-sg
+
+#--------------------------------------------------------#         
+# IAM Role
+#--------------------------------------------------------#
+  S3FullAccessRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: S3FullAccessRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'ec2.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: SecretsManagerAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: "arn:aws:secretsmanager:ap-northeast-1:891377262627:secret:MyRDSPassword"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      Tags:
+        - Key: Name
+          Value: S3FullAccessRole
+
+  InstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Roles:
+        - Ref: S3FullAccessRole

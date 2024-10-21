@@ -1,0 +1,20 @@
+---
+
+- name: 'Check if yarn is installed'
+  shell: bash -lc "yarn --version"
+  register: yarn_installed
+  changed_when: no
+  ignore_errors: yes
+
+- name: 'download yarn installer'
+  get_url: url=https://yarnpkg.com/install.sh dest=/tmp/yarn-installer.sh
+  when: yarn_installed is failed
+
+- name: 'execute the yarn-installer.sh'
+  shell: sh /tmp/yarn-installer.sh
+
+- name: 'Add Yarn to PATH'
+  shell: echo 'export PATH="$PATH:$HOME/.yarn/bin"' >> ~/.bashrc
+
+- name: 'Ensure .bashrc is sourced'
+  shell: source ~/.bashrc

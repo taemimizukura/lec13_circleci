@@ -1,0 +1,14 @@
+--- 
+- name: Install NVM
+  shell: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+  args:
+    executable: /bin/bash
+
+- name: Load NVM
+  shell: . ~/.nvm/nvm.sh
+
+- name: Install Node.js 17.9.1
+  shell: . ~/.nvm/nvm.sh && nvm install 17.9.1
+
+- name: Set Node.js default version
+  shell: . ~/.nvm/nvm.sh && nvm alias default 17.9.1

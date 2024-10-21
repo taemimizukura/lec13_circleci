@@ -1,0 +1,27 @@
+---
+- name: 'Install Nginx'
+  yum:
+    name: nginx
+    state: present
+  become: yes
+
+- name: 'Create nginx.conf'
+  template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/nginx.conf" 
+  become: yes
+
+- name: 'Start Nginx service'
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  register: nginx_started
+  become: yes
+
+- name: 'Reload Nginx service'
+  service:
+    name: nginx
+    state: reloaded
+  when: nginx_started.changed
+  become: yes

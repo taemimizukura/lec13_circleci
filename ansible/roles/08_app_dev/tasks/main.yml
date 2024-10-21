@@ -1,0 +1,96 @@
+---
+#lec13_CircleCI/.ansible/roles/07_app_dev/tasks/main.yml
+
+- name: 'Run bundle install'
+  shell: |
+    bash -lc "bundle install"
+  args: 
+    chdir: "{{ app_dir }}"
+  ignore_errors: yes
+
+#設定ファイルの変更 S3へ
+- name: 'set development.rb'
+  template:
+    src: development.rb.j2
+    dest: /home/ec2-user/raisetech-live8-sample-app/config/environments/development.rb
+
+- name: 'set S3 storage.yml'
+  template:
+    src: storage.yml.j2
+    dest: /home/ec2-user/raisetech-live8-sample-app/config/storage.yml
+  ignore_errors: yes
+
+#puma設定
+- name: 'set puma.rb'
+  template:
+    src: puma.rb.j2
+    dest: /home/ec2-user/raisetech-live8-sample-app/config/puma.rb
+  ignore_errors: yes
+
+- name: 'set puma.service'
+  become: yes
+  template:
+    src: puma.service.j2
+    dest: /etc/systemd/system/puma.service
+  ignore_errors: yes
+  
+- name: Install Python3 and pip
+  yum:
+    name:
+      - python3
+      - python3-pip
+    state: present
+
+- name: Install meson and ninja via pip
+  pip:
+    name:
+      - meson
+      - ninja
+    state: present
+    executable: pip3
+
+- name: Clone the libvips repository
+  git:
+    repo: https://github.com/libvips/libvips.git
+    dest: /home/ec2-user/libvips
+
+- name: Build and install libvips
+  shell: |
+    cd /home/ec2-user/libvips
+    ./autogen.sh
+    make
+    make install
+  args:
+    creates: /usr/local/lib/libvips.so
+
+- name: Set LD_LIBRARY_PATH
+  lineinfile:
+    path: /etc/profile
+    line: 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH'
+    state: present
+
+- name: Reload profile
+  shell: source /etc/profile
+  ignore_errors: yes
+
+
+#実行準備
+- name: 'asset precompile'
+  shell: |
+    bash -lc "rails assets:precompile"
+  args: 
+    chdir: "{{ app_dir }}"
+  ignore_errors: yes
+  
+- name: 'Run database migration'
+  command: bundle exec rake db:migrate
+  args:
+    chdir: "{{ app_dir }}"
+  ignore_errors: yes
+
+- name: 'bin/setup'
+  shell: |
+    bash -lc "bin/setup"
+  args: 
+    chdir: "{{ app_dir }}"
+  ignore_errors: yes

@@ -1,0 +1,44 @@
+---
+- name: 'Check if the application directory exists'
+  stat:
+    path: "{{ app_dir }}"
+  register: app_dir_stat
+
+- name: 'Clone the repository'
+  git:
+    repo: 'https://github.com/yuta-ushijima/raisetech-live8-sample-app.git'
+    dest: "{{ app_dir }}"
+  when: not app_dir_stat.stat.exists
+
+- name: Clean YUM cache
+  command: yum clean all
+  become: yes
+  args:
+    warn: false
+
+- name: Update all packages on the system
+  yum:
+    name: "*"
+    state: latest
+  become: yes
+
+- name: 'Install required packages'
+  yum:
+    name: 
+      - git 
+      - gcc
+      - gcc-c++
+      - make
+      - openssl-devel
+      - libyaml-devel
+      - readline-devel
+      - zlib-devel
+      - libxml2-devel
+      - libxslt-devel
+      - sqlite-devel
+      - libffi-devel
+      - glib2-devel
+      - pkgconfig
+      - gobject-introspection-devel
+    state: present
+  become: yes

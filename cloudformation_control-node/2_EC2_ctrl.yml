@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  NameBase:
+    Description: This is the base name.
+    Type: String
+    Default: lec13-control-node
+  
+  MyKeyPair:
+    Description: The EC2 Key Pair to allow SSH access to the instance
+    Type: AWS::EC2::KeyPair::KeyName
+    
+  MyIP:
+    Description: IP address allowed to access EC2
+    Type: String
+  
+  ExistingEIP: #コントロールノード用の既存のEIPを入力する
+    Description: The existing Elastic IP for ControlNode
+    Default: 54.64.20.148
+    
+Resources:
+#--------------------------------------------------------#         
+# Elastic IP
+#--------------------------------------------------------#
+#  MyElasticIP:
+#    Type: AWS::EC2::EIP
+#    Properties:
+#      Domain: vpc
+#      Tags:
+#        - Key: Name
+#          Value: !Sub "${NameBase}-elastic-ip"
+#--------------------------------------------------------#         
+# EC2
+#--------------------------------------------------------#
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: !Ref MyKeyPair
+      SecurityGroupIds:
+        - !Ref EC2SecurityGroup
+      ImageId: ami-0d889f77081190db1
+      SubnetId: !ImportValue PublicSubnet01
+      IamInstanceProfile: !Ref InstanceProfile
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          sudo yum update -y
+          sudo yum install git -y
+      Tags:
+        - Key: Name
+          Value: !Sub ec2-${NameBase}
+#--------------------------------------------------------#
+# Elastic IP Association
+#--------------------------------------------------------#
+  ElasticIPAssociation: #既存のEIPを使用する
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      InstanceId: !Ref MyEC2Instance
+      EIP: !Ref ExistingEIP
+#--------------------------------------------------------#
+# Security Group for EC2
+#--------------------------------------------------------#
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for EC2
+      GroupName: !Sub ${NameBase}-ec2-sg
+      VpcId: !ImportValue MyVpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Sub ${MyIP}/32
+          Description: Allow SSH access from local
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub ${NameBase}-ec2-sg
+#--------------------------------------------------------#         
+# IAM Role
+#--------------------------------------------------------#
+  SecretsManagerAccessRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: SecretsManagerAccessRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'ec2.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+      Tags:
+        - Key: Name
+          Value: SecretsManagerAccessRole
+
+  InstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Roles:
+        - Ref: SecretsManagerAccessRole
