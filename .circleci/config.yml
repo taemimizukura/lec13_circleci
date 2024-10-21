@@ -38,22 +38,18 @@ jobs:
           name: Install Ansible
           command: |
             pip install ansible
-
       - add_ssh_keys:
           fingerprints:
             - "SHA256:aa2K3ZyCEuc18KGwfISWQXReT4gmgmFdEFd7y8RcQwk"  # CircleCIに登録したもの
-
       - run:
           name: Add host key to known_hosts
           command: |
             ssh-keyscan -H 18.180.2.113 >> ~/.ssh/known_hosts
             chmod 644 ~/.ssh/known_hosts  
-
       - run:
           name: Execute Ansible Playbook
           command: |
             ansible-playbook -i .ansible/inventory .ansible/playbook.yml --private-key ~/.ssh/id_rsa
-
       - run:
           name: Setup AWS CLI
           command: |
