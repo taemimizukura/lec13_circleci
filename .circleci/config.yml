@@ -28,37 +28,36 @@ jobs:
           name: Deploy to AWS from template
           command: aws cloudformation deploy --template-file cloudformation/2_RDS_S3.yml --stack-name Lec13-RDS-S3
 
-  execute-ansible:
-    docker:
-      - image: cimg/python:3.8
-    steps:
-      - checkout
-      - run:
-          name: Install Ansible
-          command: |
-            pip install ansible
-      - run:
-          name: Add host key to known_hosts
-          command: |
-           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-           chmod 600 ~/.ssh/known_hosts
-           ssh-keyscan -H 18.180.2.113 >> ~/.ssh/known_hosts
-           
-      - run:
-          name: Execute Ansible Playbook
-          command: ansible-playbook .ansible/playbook.yml -i .ansible/inventory
-      - checkout
-      - aws-cli/setup:
-          region: AWS_DEFAULT_REGION
+execute-ansible:
+  docker:
+    - image: cimg/python:3.8
+  steps:
+    - checkout
 
-      - add_ssh_keys:
-          fingerprints:
-            - "	SHA256:aa2K3ZyCEuc18KGwfISWQXReT4gmgmFdEFd7y8RcQwk"
+    - run:
+        name: Install Ansible
+        command: |
+          pip install ansible
 
-      - run:
-          name: Run Ansible Playbook
-          command: |
-            ansible-playbook -i .ansible/inventory .ansible/playbook.yml --private-key ~/.ssh/id_rsa
+    - add_ssh_keys:
+        fingerprints:
+          - "SHA256:aa2K3ZyCEuc18KGwfISWQXReT4gmgmFdEFd7y8RcQwk"  # CircleCIに登録されたSSH鍵のフィンガープリント
+
+    - run:
+        name: Add host key to known_hosts
+        command: |
+          ssh-keyscan -H 18.180.2.113 >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts  # known_hostsファイルの権限を644に設定
+
+    - run:
+        name: Execute Ansible Playbook
+        command: |
+          ansible-playbook -i .ansible/inventory .ansible/playbook.yml --private-key ~/.ssh/id_rsa
+
+    - run:
+        name: Setup AWS CLI
+        command: |
+          aws configure set region $AWS_DEFAULT_REGION
 
   execute-serverspec:
     executor: ruby/default
