@@ -59,10 +59,8 @@ jobs:
       - checkout
       - ruby/install:
           version: 3.2.3
-      - run:
-          name: "Install serverspec"
-          command: |
-            gem install serverspec
+      - ruby/install-deps:
+          app-dir: serverspec
       - run:
           name: "Execute serverspec"
           command: |
