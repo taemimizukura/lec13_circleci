@@ -1,10 +1,4 @@
 ---
-- name: Update all packages on the system
-  yum:
-    name: "*"
-    state: latest
-  become: yes
-
 - name: 'Install required packages'
   yum:
     name: 

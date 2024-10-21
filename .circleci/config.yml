@@ -67,7 +67,7 @@ jobs:
           name: "Execute serverspec"
           command: |
            cd serverspec
-           TARGET HOST= 18.180.2.113 bundle exec spec
+           TARGET_HOST= 18.180.2.113 bundle exec rspec
 
 workflows:
   version: 2
