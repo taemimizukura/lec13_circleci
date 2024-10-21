@@ -157,7 +157,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: !Ref ExistingEIP
+          CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
         - IpProtocol: -1
           CidrIp: 0.0.0.0/0
@@ -199,3 +199,10 @@ Resources:
     Properties:
       Roles:
         - Ref: S3FullAccessRole
+Outputs:
+  EC2SecurityGroupTarget:
+    Value: !Ref EC2SecurityGroupTarget
+    Export:
+      Name: EC2SecurityGroupTarget
+
+    
