@@ -49,7 +49,7 @@ jobs:
       - run:
           name: Execute Ansible Playbook
           command: |
-            ansible-playbook -i .ansible/inventory .ansible/playbook.yml --private-key ~/.ssh/id_rsa
+            ansible-playbook -i ansible/inventory ansible/playbook.yml --private-key ~/.ssh/id_rsa
       - run:
           name: Setup AWS CLI
           command: |
