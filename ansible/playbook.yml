@@ -10,4 +10,11 @@
 
   roles:
     - { role: 01_setup }
+    - { role: 02_ruby }
+    - { role: 03_rails }
+    - { role: 04_nodejs }
+    - { role: 05_yarn }
+    - { role: 06_mysql }
+    - { role: 07_nginx }
+    - { role: 08_app_dev }
   
