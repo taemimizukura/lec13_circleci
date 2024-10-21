@@ -62,7 +62,7 @@ Resources:
           FromPort: 3306
           ToPort: 3306
           SourceSecurityGroupId: !ImportValue EC2SecurityGroupTarget
-          Description: Allow incoming MySQL traffic from  target node sEC2
+          Description: Allow incoming MySQL traffic from target node EC2
       SecurityGroupEgress:
         - IpProtocol: -1
           CidrIp: 0.0.0.0/0
