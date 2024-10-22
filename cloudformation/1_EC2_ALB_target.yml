@@ -13,10 +13,10 @@ Parameters:
     Description: IP address allowed to access EC2
     Type: String
 
-  ControlNodeIP:
-    Description: SSH access from control node #コントロールノードのIPアドレス
-    Type: String
-    Default: 54.64.20.148
+#  ControlNodeIP:
+#    Description: SSH access from control node #コントロールノードのIPアドレス
+#    Type: String
+#    Default: 54.64.20.148
   
   ExistingEIP: #ターゲットノード用の既存のEIPを入力する
     Description: The existing Elastic IP for targetnode
@@ -42,7 +42,6 @@ Resources:
           #!/bin/bash
           sudo yum update -y
           sudo yum install git -y
-
       Tags:
         - Key: Name
           Value: !Sub ec2-${NameBase}
@@ -72,17 +71,17 @@ Resources:
           CidrIp: 0.0.0.0/0
           Description: HTTP Access Permission
 
-        - IpProtocol: tcp
-          FromPort: 22    #SSH
-          ToPort: 22
-          CidrIp: !Sub ${ControlNodeIP}/32
-          Description: Allow SSH access from control node
+#        - IpProtocol: tcp
+#          FromPort: 22    #SSH
+#          ToPort: 22
+#          CidrIp: !Sub ${ControlNodeIP}/32
+#          Description: Allow SSH access from control node
 
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: !Sub ${MyIP}/32
-          Description: Alow SSH access from local
+#        - IpProtocol: tcp
+#          FromPort: 22
+#          ToPort: 22
+#          CidrIp: !Sub ${MyIP}/32
+#          Description: Alow SSH access from local
 
         - IpProtocol: tcp
           FromPort: 22
@@ -94,12 +93,11 @@ Resources:
           FromPort: 3000  
           ToPort: 3000 
           CidrIp: 0.0.0.0/0
-          Description: Port 3000 permission for apps
+          Description: Port 3000 permission for sample-app
 
       SecurityGroupEgress:
         - IpProtocol: "-1"
-          CidrIp: 0.0.0.0/0
-          
+          CidrIp: 0.0.0.0/0        
       Tags:
         - Key: Name
           Value: !Sub ${NameBase}-ec2-sg
