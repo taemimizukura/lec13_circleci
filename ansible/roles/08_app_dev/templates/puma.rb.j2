@@ -3,7 +3,7 @@ app_dir = "/home/ec2-user/raisetech-live8-sample-app"
 
 directory app_dir
 
-bind "http://unix:/home/ec2-user/raisetech-live8-sample-app/tmp/sockets/puma.sock"  # Unix ソケットを介して通信
+bind "unix:///home/ec2-user/raisetech-live8-sample-app/tmp/sockets/puma.sock"  # Unix ソケットを介して通信
 
 pidfile "/home/ec2-user/raisetech-live8-sample-app/tmp/pids/puma.pid"
 
