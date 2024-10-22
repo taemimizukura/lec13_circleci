@@ -3016,3 +3016,32 @@ rid of this message.
 2024-10-21 07:39:43,359 p=22346 u=ec2-user n=ansible | ...ignoring
 2024-10-21 07:39:43,364 p=22346 u=ec2-user n=ansible | PLAY RECAP ******************************************************************************************************************
 2024-10-21 07:39:43,364 p=22346 u=ec2-user n=ansible | 18.180.2.113               : ok=49   changed=21   unreachable=0    failed=0    skipped=6    rescued=0    ignored=3   
+2024-10-22 13:53:09,113 p=17942 u=ec2-user n=ansible | [WARNING]: Unable to parse /home/ec2-user/inventory as an inventory source
+
+2024-10-22 13:53:09,115 p=17942 u=ec2-user n=ansible | [WARNING]: No inventory was parsed, only implicit localhost is available
+
+2024-10-22 13:53:09,116 p=17942 u=ec2-user n=ansible | [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match
+'all'
+
+2024-10-22 13:53:36,357 p=17985 u=ec2-user n=ansible | [WARNING]: Unable to parse /home/ec2-user/inventory as an inventory source
+
+2024-10-22 13:53:36,358 p=17985 u=ec2-user n=ansible | [WARNING]: No inventory was parsed, only implicit localhost is available
+
+2024-10-22 13:53:36,359 p=17985 u=ec2-user n=ansible | [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match
+'all'
+
+2024-10-22 13:54:33,523 p=18083 u=ec2-user n=ansible | 18.180.2.113 | UNREACHABLE! => {
+    "changed": false, 
+    "msg": "Failed to connect to the host via ssh: Warning: Permanently added '18.180.2.113' (ECDSA) to the list of known hosts.\r\nPermission denied (publickey,gssapi-keyex,gssapi-with-mic).", 
+    "unreachable": true
+}
+2024-10-22 13:55:34,943 p=18182 u=ec2-user n=ansible | 18.180.2.113 | UNREACHABLE! => {
+    "changed": false, 
+    "msg": "Failed to connect to the host via ssh: Warning: Permanently added '18.180.2.113' (ECDSA) to the list of known hosts.\r\nPermission denied (publickey,gssapi-keyex,gssapi-with-mic).", 
+    "unreachable": true
+}
+2024-10-22 13:59:19,638 p=18237 u=ec2-user n=ansible | 18.180.2.113 | UNREACHABLE! => {
+    "changed": false, 
+    "msg": "Failed to connect to the host via ssh: Warning: Permanently added '18.180.2.113' (ECDSA) to the list of known hosts.\r\nPermission denied (publickey,gssapi-keyex,gssapi-with-mic).", 
+    "unreachable": true
+}

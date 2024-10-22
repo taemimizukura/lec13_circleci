@@ -51,7 +51,7 @@ jobs:
       - run:
           name: Execute Ansible Playbook
           command: |
-            ansible-playbook -i ansible/inventory ansible/playbook.yml --private-key $SSH_PRIVATE_KEY_PATH
+            ansible-playbook -i ansible/inventory ansible/playbook.yml --private-key ~.ssh/id_rsa
 
   execute-serverspec:
     executor: ruby/default
