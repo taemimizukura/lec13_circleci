@@ -23,24 +23,33 @@ describe package('git') do
 end  
 
 #指定のバージョンがインストールされているか  
-# Rubyバージョン確認
+# Ruby3.2.3
 describe command('cd raisetech-live8-sample-app/ && ruby -v') do
   its(:stdout) { should include '3.2.3' }
 end
-
+# bundler 2.3.14
 describe command('bundler -v') do  
   its(:stdout) { should include '2.3.14' }  
 end  
         
-# Railsバージョン確認
+# Rails7.1.3.2
 describe command('rails -v') do
   its(:stdout) { should include '7.1.3.2' }
 end 
-        
+
+# Node 17.9.1
 describe command('node -v') do  
   its(:stdout) { should include '17.9.1' }  
 end  
-        
+
+# yarn 1.22.19
 describe command('yarn -v') do  
   its(:stdout) { should include '1.22.19' }  
 end  
+
+#　パッケージがインストールされているか
+%w{git gcc gcc-c++ make open-devel libyaml-devel}.each do |pkg|
+  describe package(pkg) do
+    it { should be_installed }
+  end
+end

@@ -1,0 +1,8 @@
+# ログファイルを無視
+*.log
+
+# 以下のディレクトリを無視
+logs/
+log/
+cache/
+serverspec/vendor
