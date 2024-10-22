@@ -1,4 +1,10 @@
 ---
+- name: Install Nginx repository
+  amazon-linux-extras:
+    name: nginx1
+    state: enabled
+  become: yes
+
 - name: Install Nginx
   yum:
     name: nginx
