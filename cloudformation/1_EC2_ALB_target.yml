@@ -89,11 +89,11 @@ Resources:
           CidrIp: 0.0.0.0/0
           Description: for circleci   #circleci無料プランだとIPアドレス範囲が分からないため開放
 
-        - IpProtocol: tcp
-          FromPort: 3000  
-          ToPort: 3000 
-          CidrIp: 0.0.0.0/0
-          Description: Port 3000 permission for sample-app
+#        - IpProtocol: tcp
+#          FromPort: 3000  
+#          ToPort: 3000 
+#          CidrIp: 0.0.0.0/0
+#          Description: Port 3000 permission for sample-app
 
       SecurityGroupEgress:
         - IpProtocol: "-1"
