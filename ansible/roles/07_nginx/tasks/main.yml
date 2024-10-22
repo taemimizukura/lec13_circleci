@@ -1,26 +1,23 @@
 ---
-- name: Install Nginx repository
-  amazon-linux-extras:
-    name: nginx1
-    state: enabled
+- name: Install EPEL repository
+  yum:
+    name: epel-release
+    state: present
   become: yes
 
 - name: Install Nginx
   yum:
     name: nginx
     state: present
-  become: yes
 
 - name: Create nginx.conf from template
   template:
     src: nginx.conf.j2
     dest: "/etc/nginx/nginx.conf"
   notify: Reload Nginx service
-  become: yes
 
 - name: Enable and start Nginx service
   service:
     name: nginx
     state: started
     enabled: yes
-  become: yes

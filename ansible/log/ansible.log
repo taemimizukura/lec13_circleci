@@ -3045,3 +3045,47 @@ rid of this message.
     "msg": "Failed to connect to the host via ssh: Warning: Permanently added '18.180.2.113' (ECDSA) to the list of known hosts.\r\nPermission denied (publickey,gssapi-keyex,gssapi-with-mic).", 
     "unreachable": true
 }
+2024-10-22 14:43:37,312 p=19491 u=ec2-user n=ansible | ERROR! couldn't resolve module/action 'amazon-linux-extras'. This often indicates a misspelling, missing collection, or incorrect module path.
+
+The error appears to be in '/home/ec2-user/lec13_circleci/ansible/roles/07_nginx/tasks/main.yml': line 2, column 3, but may
+be elsewhere in the file depending on the exact syntax problem.
+
+The offending line appears to be:
+
+---
+- name: Install Nginx repository
+  ^ here
+
+2024-10-22 14:46:16,849 p=19528 u=ec2-user n=ansible | ERROR! couldn't resolve module/action 'amazon-linux-extras'. This often indicates a misspelling, missing collection, or incorrect module path.
+
+The error appears to be in '/home/ec2-user/lec13_circleci/ansible/roles/07_nginx/tasks/main.yml': line 2, column 3, but may
+be elsewhere in the file depending on the exact syntax problem.
+
+The offending line appears to be:
+
+---
+- name: Install Nginx repository
+  ^ here
+
+2024-10-22 14:48:18,072 p=19614 u=ec2-user n=ansible | PLAY [all] ****************************************************************************************************************
+2024-10-22 14:48:18,091 p=19614 u=ec2-user n=ansible | TASK [Gathering Facts] ****************************************************************************************************
+2024-10-22 14:48:20,644 p=19614 u=ec2-user n=ansible | ok: [18.180.2.113]
+2024-10-22 14:48:20,654 p=19614 u=ec2-user n=ansible | TASK [01_setup : Install required packages] *******************************************************************************
+2024-10-22 14:48:22,665 p=19614 u=ec2-user n=ansible | ok: [18.180.2.113]
+2024-10-22 14:48:22,677 p=19614 u=ec2-user n=ansible | TASK [01_setup : Check if the application directory exists] ***************************************************************
+2024-10-22 14:48:24,049 p=19614 u=ec2-user n=ansible | ok: [18.180.2.113]
+2024-10-22 14:48:24,060 p=19614 u=ec2-user n=ansible | TASK [01_setup : Clone the repository] ************************************************************************************
+2024-10-22 14:48:24,091 p=19614 u=ec2-user n=ansible | skipping: [18.180.2.113]
+2024-10-22 14:48:24,099 p=19614 u=ec2-user n=ansible | TASK [02_ruby : Set rbenv path] *******************************************************************************************
+2024-10-22 14:48:24,116 p=19614 u=ec2-user n=ansible | ok: [18.180.2.113]
+2024-10-22 14:48:24,124 p=19614 u=ec2-user n=ansible | TASK [02_ruby : Check if rbenv is installed] ******************************************************************************
+2024-10-22 14:48:25,384 p=19614 u=ec2-user n=ansible | skipping: [18.180.2.113]
+2024-10-22 14:48:25,404 p=19614 u=ec2-user n=ansible | TASK [02_ruby : Clone rbenv if not installed] *****************************************************************************
+2024-10-22 14:48:25,445 p=19614 u=ec2-user n=ansible | skipping: [18.180.2.113]
+2024-10-22 14:48:25,453 p=19614 u=ec2-user n=ansible | TASK [02_ruby : Add rbenv to PATH in .bashrc] *****************************************************************************
+2024-10-22 14:48:26,726 p=19614 u=ec2-user n=ansible | ok: [18.180.2.113]
+2024-10-22 14:48:26,736 p=19614 u=ec2-user n=ansible | TASK [02_ruby : Add rbenv init to .bashrc] ********************************************************************************
+2024-10-22 14:48:27,884 p=19614 u=ec2-user n=ansible | ok: [18.180.2.113]
+2024-10-22 14:48:27,893 p=19614 u=ec2-user n=ansible | TASK [02_ruby : Reload .bashrc] *******************************************************************************************
+2024-10-22 14:48:27,909 p=19614 u=ec2-user n=ansible |  [ERROR]: User interrupted execution
+
