@@ -83,6 +83,8 @@ Resources:
               - "*"
             AllowedMethods: #GETメソッドのみ許可
               - GET
+              - PUT   # 追加
+              - POST  # 追加
             AllowedOrigins:
               - "*"
             MaxAge: 3000

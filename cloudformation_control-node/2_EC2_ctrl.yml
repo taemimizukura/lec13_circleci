@@ -74,7 +74,7 @@ Resources:
           CidrIp: !Sub ${MyIP}/32
           Description: Allow SSH access from local
       SecurityGroupEgress:
-        - IpProtocol: -1
+        - IpProtocol: "-1"
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
@@ -82,10 +82,10 @@ Resources:
 #--------------------------------------------------------#         
 # IAM Role
 #--------------------------------------------------------#
-  SecretsManagerAccessRole:
+  S3AndSecretsManagerAccessRole:
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: SecretsManagerAccessRole
+      RoleName: S3AndSecretsManagerAccessRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -93,14 +93,28 @@ Resources:
             Principal:
               Service: 'ec2.amazonaws.com'
             Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: S3AndSecretsManagerAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: "arn:aws:secretsmanager:ap-northeast-1:891377262627:secret:MyRDSPassword"
+              - Effect: 'Allow'
+                Action:
+                  - s3:*
+                Resource: "*"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
       Tags:
         - Key: Name
-          Value: SecretsManagerAccessRole
+          Value: S3AndSecretsManagerAccessRole
 
   InstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
     Properties:
       Roles:
-        - Ref: SecretsManagerAccessRole
+        - Ref: S3AndSecretsManagerAccessRole

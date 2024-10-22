@@ -97,7 +97,7 @@ Resources:
           Description: Port 3000 permission for apps
 
       SecurityGroupEgress:
-        - IpProtocol: -1
+        - IpProtocol: "-1"
           CidrIp: 0.0.0.0/0
           
       Tags:
