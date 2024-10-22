@@ -9,9 +9,9 @@ Parameters:
     Description: The EC2 Key Pair to allow SSH access to the instance
     Type: AWS::EC2::KeyPair::KeyName
   
-  MyIP:
-    Description: IP address allowed to access EC2
-    Type: String
+#  MyIP:
+#    Description: IP address allowed to access EC2
+#    Type: String
 
 #  ControlNodeIP:
 #    Description: SSH access from control node #コントロールノードのIPアドレス

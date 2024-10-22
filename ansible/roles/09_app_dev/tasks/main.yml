@@ -8,32 +8,19 @@
     chdir: "{{ app_dir }}"
   ignore_errors: yes
 
-#設定ファイルの変更 S3へ
+#ローカルからS3へ変更
 - name: 'set development.rb'
   template:
     src: development.rb.j2
     dest: /home/ec2-user/raisetech-live8-sample-app/config/environments/development.rb
-
+#S3の設定
 - name: 'set S3 storage.yml'
   template:
     src: storage.yml.j2
     dest: /home/ec2-user/raisetech-live8-sample-app/config/storage.yml
   ignore_errors: yes
 
-#puma設定
-- name: 'set puma.rb'
-  template:
-    src: puma.rb.j2
-    dest: /home/ec2-user/raisetech-live8-sample-app/config/puma.rb
-  ignore_errors: yes
-
-- name: 'set puma.service'
-  become: yes
-  template:
-    src: puma.service.j2
-    dest: /etc/systemd/system/puma.service
-  ignore_errors: yes
-  
+#libvipsのインストール
 - name: Install Python3 and pip
   yum:
     name:
@@ -49,12 +36,6 @@
     state: present
     executable: pip3
 
-- name: Remove existing libvips directory
-  file:
-    path: /home/ec2-user/libvips
-    state: absent
-  ignore_errors: yes
-
 - name: Clone libvips repository
   git:
     repo: https://github.com/libvips/libvips.git
@@ -69,7 +50,7 @@
   args:
     creates: /usr/local/lib/libvips.so
 
-- name: Set LD_LIBRARY_PATH for ec2-user
+- name: Set path for ec2-user
   lineinfile:
     path: /home/ec2-user/.bash_profile
     line: /usr/local/lib/
@@ -85,7 +66,7 @@
   args: 
     chdir: "{{ app_dir }}"
   ignore_errors: yes
-  
+
 - name: 'Run database migration'
   command: bundle exec rake db:migrate
   args:
