@@ -30,18 +30,9 @@
     repo: 'https://github.com/rbenv/ruby-build.git'
     dest: '/home/ec2-user/.rbenv/plugins/ruby-build'
 
-# システム全体でrbenvを使用できるように/etc/profileに変数追加
-- name: Insert/update /etc/profile env
-  become: yes
-  blockinfile:
-    path: /etc/profile
-    block: |
-      export RBENV_ROOT="/home/ec2-user/.rbenv"
-      export PATH="${RBENV_ROOT}/bin:${PATH}"
-      eval "$(rbenv init --no-rehash -)"
-
 - name: Load rbenv in current session
-  shell: source ~/.bashrc
+  shell: |
+    source /home/ec2-user/.bashrc
 
 - name: Check if Ruby 3.2.3 is already installed
   shell: bash -lc "ruby -v"
@@ -49,7 +40,7 @@
   ignore_errors: yes
 
 - name: Install Ruby if not already installed
-  shell: bash -lc "rbenv install 3.2.3 --no-document"
+  shell: bash -lc "rbenv install 3.2.3"
   when: ruby_installed is failed   # Rubyがインストールされていない場合のみ実行
 
 - name: Rehash rbenv
