@@ -13,6 +13,12 @@
     enabled: yes
   become: yes
 
+- name: Create directory for socket
+  file:
+    path: /home/ec2-user/raisetech-live8-sample-app/tmp/sock
+    state: directory
+    mode: '0755'
+
 - name: set puma.rb
   template:
     src: puma.rb.j2

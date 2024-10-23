@@ -20,6 +20,12 @@
       - python3-pip
     state: present
 
+- name: Install ninja-build
+  yum:
+    name: ninja-build
+    state: present
+  become: yes
+
 - name: Install Meson and Ninja using pip
   pip:
     name:
@@ -28,11 +34,11 @@
     state: present
     executable: /usr/bin/pip3
 
-- name: Install ninja-build
-  yum:
-    name: ninja-build
+- name: Add Meson to PATH in .bashrc
+  lineinfile:
+    path: /home/ec2-user/.bashrc
+    line: 'export PATH="$HOME/local/bin:$PATH"'
     state: present
-  become: yes
 
 - name: Clone libvips repository
   git:
