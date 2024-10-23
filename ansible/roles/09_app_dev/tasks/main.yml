@@ -69,6 +69,7 @@
   args:
     chdir: /home/ec2-user/libvips/build
   become: yes
+  become_user: root 
   ignore_errors: yes
 
 #実行準備
