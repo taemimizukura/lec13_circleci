@@ -28,6 +28,12 @@
     state: present
     executable: /usr/bin/pip3
 
+- name: Install ninja-build
+  yum:
+    name: ninja-build
+    state: present
+  become: yes
+
 - name: Clone libvips repository
   git:
     repo: https://github.com/libvips/libvips.git

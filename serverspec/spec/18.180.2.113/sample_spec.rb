@@ -12,8 +12,8 @@ describe port(listen_port) do
   it { should be_listening }  
 end  
 
-#curlでHTTPアクセスして200 OKが返ってくるか確認する  
-describe command('curl http://127.0.0.1:#{listen_port}/_plugin/head/ -o /dev/null -w "%  {http_code}\n" -s') do  
+# curlでHTTPアクセスして200 OKが返ってくるか確認する  
+describe command("curl http://127.0.0.1:#{listen_port}/_plugin/head/ -o /dev/null -w '%{http_code}\n' -s") do  
   its(:stdout) { should match /^200$/ }  
 end
 
@@ -22,11 +22,11 @@ describe package('git') do
       it { should be_installed }  
 end  
 
-#指定のバージョンがインストールされているか  
-# Ruby3.2.3
-describe command('cd raisetech-live8-sample-app/ && ruby -v') do
+# 指定のバージョンがインストールされているか  
+describe command('cd /home/ec2-user/raisetech-live8-sample-app/ && ruby -v') do
   its(:stdout) { should include '3.2.3' }
 end
+
 # bundler 2.3.14
 describe command('bundler -v') do  
   its(:stdout) { should include '2.3.14' }  
@@ -48,7 +48,7 @@ describe command('yarn -v') do
 end  
 
 #　パッケージがインストールされているか
-%w{git gcc gcc-c++ make open-devel libyaml-devel}.each do |pkg|
+%w{make gcc gcc-c++ make open-devel libyaml-devel}.each do |pkg|
   describe package(pkg) do
     it { should be_installed }
   end
