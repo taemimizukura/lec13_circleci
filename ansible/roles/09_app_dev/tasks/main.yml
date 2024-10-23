@@ -1,5 +1,5 @@
 ---
-- name: 'Run bundle install'
+- name: Run bundle install
   shell: |
     bash -lc "bundle install"
   args: 
@@ -7,12 +7,12 @@
   ignore_errors: yes
 
 #ローカルからS3へ変更
-- name: 'set development.rb'
+- name: set development.rb
   template:
     src: development.rb.j2
     dest: /home/ec2-user/raisetech-live8-sample-app/config/environments/development.rb
 #S3の設定
-- name: 'set S3 storage.yml'
+- name: set S3 storage.yml
   template:
     src: storage.yml.j2
     dest: /home/ec2-user/raisetech-live8-sample-app/config/storage.yml
@@ -26,54 +26,40 @@
       - python3-pip
     state: present
 
-- name: Install meson and ninja via pip
+- name: Install Meson using pip
   pip:
     name:
       - meson
-      - ninja
     state: present
-    executable: pip3
+    executable: /usr/bin/pip3
 
 - name: Clone libvips repository
   git:
     repo: https://github.com/libvips/libvips.git
     dest: /home/ec2-user/libvips
+    update: no
 
-- name: Build and install libvips
-  shell: |
-    cd /home/ec2-user/libvips
-    ./autogen.sh
-    make
-    make install
+- name: Compile libvips
+  shell: bash -lc "meson setup build --prefix /usr/.local/bin"
   args:
-    creates: /usr/local/lib/libvips.so
-
-- name: Set path for ec2-user
-  lineinfile:
-    path: /home/ec2-user/.bash_profile
-    line: /usr/local/lib/
-
-- name: Reload profile
-  shell: source /etc/profile
+    chdir: /home/ec2-user/libvips
   ignore_errors: yes
 
-#実行準備
-- name: 'asset precompile'
-  shell: |
-    bash -lc "rails assets:precompile"
-  args: 
-    chdir: "{{ app_dir }}"
-  ignore_errors: yes
-
-- name: 'Run database migration'
-  command: bundle exec rake db:migrate
+- name: Build libvips
+  shell: bash -lc "meson compile"
   args:
-    chdir: "{{ app_dir }}"
+    chdir: /home/ec2-user/libvips/build
   ignore_errors: yes
 
-- name: 'bin/setup'
-  shell: |
-    bash -lc "bin/setup"
-  args: 
-    chdir: "{{ app_dir }}"
+- name: meson test
+  shell: bash -lc "meson test"
+  args:
+    chdir: /home/ec2-user/libvips/build
   ignore_errors: yes
+
+- name: install libvips
+  shell: bash -lc "meson install"
+  args:
+    chdir: /home/ec2-user/libvips/build
+  ignore_errors: yes
+

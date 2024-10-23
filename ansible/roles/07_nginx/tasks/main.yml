@@ -1,5 +1,5 @@
 ---
-- name: Install NGINX from RPM
+- name: Install nginx from RPM
   yum:
     name: "https://nginx.org/packages/centos/7/x86_64/RPMS/nginx-1.24.0-1.el7.ngx.x86_64.rpm"
     state: present
@@ -12,7 +12,7 @@
   notify: Reload Nginx service
   become: yes
 
-- name: Enable and start NGINX service
+- name: Enable and start NGINX service 
   service:
     name: nginx
     state: started

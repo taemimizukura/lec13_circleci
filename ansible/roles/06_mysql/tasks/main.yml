@@ -16,13 +16,13 @@
     state: present
   become: yes
 
-- name: 'Run bundle install'
+- name: Run bundle install
   shell: bash -lc "bundle install"
   args:
     chdir: "{{ app_dir }}"
   ignore_errors: yes
 
-- name: 'Create database.yml from template'
+- name: Create database.yml from template
   template:
     src: database.yml.j2
     dest: "{{ app_dir }}/config/database.yml"

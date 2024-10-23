@@ -13,8 +13,19 @@
   register: nvm_loaded
   changed_when: false
 
-- name: Install Node.js 17.9.1
-  shell: . ~/.nvm/nvm.sh && nvm install 17.9.1
+- name: Add NVM to .bashrc
+  lineinfile:
+    path: /home/ec2-user/.bashrc
+    line: 'export NVM_DIR="$HOME/.nvm"'
+    state: present
 
-- name: Set Node.js default version
-  shell: . ~/.nvm/nvm.sh && nvm alias default 17.9.1
+- name: Check if Node.js 17.9.1 is already installed
+  shell: bash -lc "node --version"
+  register: node_installed
+  ignore_errors: yes
+
+- name: Install Node.js 17.9.1
+  shell: bash -lc "nvm install 17.9.1"
+  ignore_errors: yes
+  when: node_installed is failed # nodeがインストールされていない場合のみ実行
+
