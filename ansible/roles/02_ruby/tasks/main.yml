@@ -40,6 +40,9 @@
       export PATH="${RBENV_ROOT}/bin:${PATH}"
       eval "$(rbenv init --no-rehash -)"
 
+- name: Load rbenv in current session
+  shell: source ~/.bashrc
+
 - name: Check if Ruby 3.2.3 is already installed
   shell: bash -lc "ruby -v"
   register: ruby_installed
@@ -48,6 +51,9 @@
 - name: Install Ruby if not already installed
   shell: bash -lc "rbenv install 3.2.3 --no-document"
   when: ruby_installed is failed   # Rubyがインストールされていない場合のみ実行
+
+- name: Rehash rbenv
+  shell: bash -lc "rbenv rehash"
 
 - name: Set Ruby 3.2.3 as global version
   shell: bash -lc "rbenv global 3.2.3"
