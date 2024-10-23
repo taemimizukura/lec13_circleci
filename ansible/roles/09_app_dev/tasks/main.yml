@@ -1,16 +1,10 @@
 ---
-- name: Run bundle install
-  shell: |
-    bash -lc "bundle install"
-  args: 
-    chdir: "{{ app_dir }}"
-  ignore_errors: yes
-
 #ローカルからS3へ変更
 - name: set development.rb
   template:
     src: development.rb.j2
     dest: /home/ec2-user/raisetech-live8-sample-app/config/environments/development.rb
+
 #S3の設定
 - name: set S3 storage.yml
   template:
@@ -26,10 +20,11 @@
       - python3-pip
     state: present
 
-- name: Install Meson using pip
+- name: Install Meson and Ninja using pip
   pip:
     name:
       - meson
+      - ninja
     state: present
     executable: /usr/bin/pip3
 
@@ -63,3 +58,28 @@
     chdir: /home/ec2-user/libvips/build
   ignore_errors: yes
 
+#実行準備
+- name: Run bundle install
+  shell: |
+    bash -lc "bundle install"
+  args: 
+    chdir: "{{ app_dir }}"
+  ignore_errors: yes
+
+- name: 'asset precompile'
+  shell: |
+    bash -lc "rails assets:precompile"
+  args: 
+    chdir: "{{ app_dir }}"
+
+- name: 'Run database migration'
+  command: bundle exec rake db:migrate
+  args:
+    chdir: "{{ app_dir }}"
+
+- name: 'bin/setup'
+  shell: |
+    bash -lc "bin/setup"
+  args: 
+    chdir: "{{ app_dir }}"
+  ignore_errors: yes

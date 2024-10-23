@@ -17,3 +17,10 @@
 
 - name: Ensure .bashrc is sourced
   shell: source ~/.bashrc
+
+- name: Run bundle install
+  shell: |
+    bash -lc "bundle install"
+  args: 
+    chdir: "{{ app_dir }}"
+  ignore_errors: ye

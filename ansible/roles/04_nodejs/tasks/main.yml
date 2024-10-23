@@ -29,3 +29,10 @@
   ignore_errors: yes
   when: node_installed is failed # nodeがインストールされていない場合のみ実行
 
+- name: Run bundle install
+  shell: |
+    bash -lc "bundle install"
+  args: 
+    chdir: "{{ app_dir }}"
+  ignore_errors: ye
+

@@ -6,6 +6,7 @@
       - gcc
       - gcc-c++
       - make
+      - cmake
       - openssl-devel
       - libyaml-devel
       - readline-devel
@@ -25,7 +26,9 @@
       - libtiff-devel
       - cairo-devel
       - pango-devel
-      - tree 
+      - ImageMagick-devel
+      - libarchive
+      - fftw-devel
     state: present
   become: yes
 
