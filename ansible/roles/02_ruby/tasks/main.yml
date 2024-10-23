@@ -41,7 +41,7 @@
       eval "$(rbenv init --no-rehash -)"
 
 - name: Check if Ruby 3.2.3 is already installed
-  shell: bash -lc "/home/ec2-user/.rbenv/shims/ruby -v"
+  shell: bash -lc "ruby -v"
   register: ruby_installed
   ignore_errors: yes
 
