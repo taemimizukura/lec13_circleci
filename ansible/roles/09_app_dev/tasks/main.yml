@@ -37,7 +37,7 @@
 - name: Add Meson to PATH in .bashrc
   lineinfile:
     path: /home/ec2-user/.bashrc
-    line: 'export PATH="$HOME/local/bin:$PATH"'
+    line: 'export PATH="$HOME/.local/bin:$PATH"'
     state: present
 
 - name: Clone libvips repository
