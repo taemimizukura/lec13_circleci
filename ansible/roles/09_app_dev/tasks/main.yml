@@ -1,6 +1,4 @@
 ---
-#lec13_CircleCI/.ansible/roles/07_app_dev/tasks/main.yml
-
 - name: 'Run bundle install'
   shell: |
     bash -lc "bundle install"

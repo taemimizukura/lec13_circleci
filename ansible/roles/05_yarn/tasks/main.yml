@@ -1,5 +1,4 @@
 ---
-
 - name: 'Check if yarn is installed'
   shell: bash -lc "yarn --version"
   register: yarn_installed

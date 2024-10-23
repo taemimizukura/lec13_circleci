@@ -11,7 +11,7 @@
 - name: Load NVM
   shell: . ~/.nvm/nvm.sh
   register: nvm_loaded
-  changed_when: false  # NVMのロードは変更を伴わないので、変更フラグをfalseに設定
+  changed_when: false
 
 - name: Install Node.js 17.9.1
   shell: . ~/.nvm/nvm.sh && nvm install 17.9.1
