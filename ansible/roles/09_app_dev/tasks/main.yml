@@ -28,12 +28,8 @@
   become: yes
 
 - name: Install Meson and Ninja using pip
-  pip:
-    name:
-      - meson
-      - ninja
-    state: present
-    executable: /usr/bin/pip3
+  shell: bash -lc "pip3 install meson ninja"
+  ignore_errors: yes
 
 - name: Add Meson to PATH in .bashrc
   lineinfile:
