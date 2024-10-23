@@ -41,7 +41,7 @@
     update: no
 
 - name: Compile libvips
-  shell: bash -lc "meson setup build --prefix /usr/.local/bin"
+  shell: bash -lc "meson setup build --prefix /usr/local"
   args:
     chdir: /home/ec2-user/libvips
   ignore_errors: yes
@@ -62,6 +62,7 @@
   shell: bash -lc "meson install"
   args:
     chdir: /home/ec2-user/libvips/build
+  become: yes
   ignore_errors: yes
 
 #実行準備
