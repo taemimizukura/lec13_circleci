@@ -1,10 +1,27 @@
 ---
+- name: Create stdout log file for Puma #標準出力ログファイルを作成しておく
+  file:
+    path: /home/ec2-user/raisetech-live8-sample-app/log/puma.stdout.log
+    state: touch
+    owner: ec2-user
+    group: ec2-user
+    mode: '0644'
+
+- name: Create stderr log file for Puma #エラーログファイルを作成しておく
+  file:
+    path: /home/ec2-user/raisetech-live8-sample-app/log/puma.stderr.log
+    state: touch
+    owner: ec2-user
+    group: ec2-user
+    mode: '0644'
+
 - name: Create Puma systemd service file
   template:
     src: puma.service.j2
     dest: /etc/systemd/system/puma.service
   become: yes
   notify: Reload systemd
+
 
 - name: Start and enable Puma service
   systemd:
@@ -13,9 +30,9 @@
     enabled: yes
   become: yes
 
-- name: Create directory for socket
+- name: Create directory for pid
   file:
-    path: /home/ec2-user/raisetech-live8-sample-app/tmp/sock
+    path: /home/ec2-user/raisetech-live8-sample-app/tmp/pids
     state: directory
     mode: '0755'
 

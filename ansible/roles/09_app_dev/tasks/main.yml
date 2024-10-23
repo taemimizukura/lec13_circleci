@@ -19,6 +19,7 @@
       - python3
       - python3-pip
     state: present
+  become: yes  #システム全体で使えるように
 
 - name: Install ninja-build
   yum:
@@ -39,6 +40,12 @@
     path: /home/ec2-user/.bashrc
     line: 'export PATH="$HOME/.local/bin:$PATH"'
     state: present
+
+- name: Source .bashrc to update PATH
+  shell: source /home/ec2-user/.bashrc
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
 
 - name: Clone libvips repository
   git:
@@ -68,8 +75,9 @@
   shell: bash -lc "meson install"
   args:
     chdir: /home/ec2-user/libvips/build
-  become: yes
-  become_user: root 
+  become: yes 
+  become_user: root  
+  become_method: sudo
   ignore_errors: yes
 
 #実行準備
