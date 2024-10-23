@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: targetnode
   vars: 
     app_dir: /home/ec2-user/raisetech-live8-sample-app
     db_host: "{{ lookup('env', 'RDS_ENDPOINT') }}" 
