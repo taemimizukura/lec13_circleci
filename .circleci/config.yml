@@ -40,6 +40,7 @@ jobs:
           name: Install Ansible
           command: |
             pip install ansible
+
       - add_ssh_keys:
           fingerprints:
             - "SHA256:aa2K3ZyCEuc18KGwfISWQXReT4gmgmFdEFd7y8RcQwk"  # CircleCIに登録したもの
@@ -60,18 +61,24 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "SHA256:aa2K3ZyCEuc18KGwfISWQXReT4gmgmFdEFd7y8RcQwk"
-      - ruby/install:
-          version: 3.2.3
       - run:
-          name: "Update RubyGems"
-          command: gem update --system
-      - ruby/install-deps:
-          app-dir: serverspec
-      - run:
-          name: "Execute serverspec"
-          command: |
-            cd serverspec
-            TARGET_HOST=18.180.2.113 bundle exec rspec
+    name: Add host key to known_hosts
+    command: |
+      ssh-keyscan -H 18.180.2.113 >> ~/.ssh/known_hosts 
+
+    - ruby/install:
+        version: 3.2.3
+    - run:
+        name: "Update RubyGems"
+        command: gem update --system
+    - ruby/install-deps:
+        app-dir: serverspec
+
+    - run:
+        name: "Execute serverspec"
+        command: |
+          cd serverspec
+          TARGET_HOST=18.180.2.113 bundle exec rspec --private-key ~.ssh/id_rsa
 
 workflows:
   version: 2
