@@ -54,24 +54,24 @@ jobs:
             ansible-playbook -i ansible/inventory ansible/playbook.yml --private-key ~.ssh/id_rsa
 
   execute-serverspec:
-  executor: ruby/default
-  steps:
-    - checkout
-    - add_ssh_keys:
-        fingerprints:
-          - "SHA256:aa2K3ZyCEuc18KGwfISWQXReT4gmgmFdEFd7y8RcQwk"
-    - ruby/install:
-        version: 3.2.3
-    - run:
-        name: "Update RubyGems"
-        command: gem update --system
-    - ruby/install-deps:
-        app-dir: serverspec
-    - run:
-        name: "Execute serverspec"
-        command: |
-          cd serverspec
-          TARGET_HOST=18.180.2.113 bundle exec rspec
+    executor: ruby/default
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:aa2K3ZyCEuc18KGwfISWQXReT4gmgmFdEFd7y8RcQwk"
+      - ruby/install:
+          version: 3.2.3
+      - run:
+          name: "Update RubyGems"
+          command: gem update --system
+      - ruby/install-deps:
+          app-dir: serverspec
+      - run:
+          name: "Execute serverspec"
+          command: |
+            cd serverspec
+            TARGET_HOST=18.180.2.113 bundle exec rspec
 
 workflows:
   version: 2
