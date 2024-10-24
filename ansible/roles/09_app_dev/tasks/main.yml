@@ -67,11 +67,19 @@
     chdir: /home/ec2-user/libvips/build
   ignore_errors: yes
 
+- name: Change ownership of /usr/local/bin to ec2-user
+  ansible.builtin.command: chown ec2-user:ec2-user /usr/local/bin
+  ignore_errors: yes
+
 - name: install libvips
   shell: bash -lc "meson install"
   args:
     chdir: /home/ec2-user/libvips/build
   become: yes 
+  ignore_errors: yes
+
+- name: Revert ownership of /usr/local/bin to root
+  ansible.builtin.command: chown root:root /usr/local/bin
   ignore_errors: yes
 
 #実行準備
@@ -87,11 +95,13 @@
     bash -lc "rails assets:precompile"
   args: 
     chdir: "{{ app_dir }}"
+  ignore_errors: yes
 
 - name: 'Run database migration'
   command: bundle exec rake db:migrate
   args:
     chdir: "{{ app_dir }}"
+  ignore_errors: yes
 
 - name: 'bin/setup'
   shell: |
