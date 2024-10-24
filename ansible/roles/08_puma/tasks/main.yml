@@ -1,7 +1,7 @@
 ---
 - name: Create stdout log file for Puma #標準出力ログファイルを作成しておく
   file:
-    path: /home/ec2-user/raisetech-live8-sample-app/log/puma.stdout.log
+    path: "{{ app_dir }}"/log/puma.stdout.log
     state: touch
     owner: ec2-user
     group: ec2-user
@@ -9,7 +9,7 @@
 
 - name: Create stderr log file for Puma #エラーログファイルを作成しておく
   file:
-    path: /home/ec2-user/raisetech-live8-sample-app/log/puma.stderr.log
+    path: "{{ app_dir }}"/log/puma.stderr.log
     state: touch
     owner: ec2-user
     group: ec2-user
@@ -32,12 +32,12 @@
 
 - name: Create directory for pid
   file:
-    path: /home/ec2-user/raisetech-live8-sample-app/tmp/pids
+    path: "{{ app_dir }}"/tmp/pids
     state: directory
     mode: '0755'
 
 - name: set puma.rb
   template:
     src: puma.rb.j2
-    dest: /home/ec2-user/raisetech-live8-sample-app/config/puma.rb
+    dest: "{{ app_dir }}"/config/puma.rb
   notify: Reload systemd

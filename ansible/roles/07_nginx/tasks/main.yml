@@ -7,7 +7,7 @@
 
 - name: Create directory for socket
   file:
-    path: /home/ec2-user/raisetech-live8-sample-app/tmp/sockets
+    path: "{{ app_dir }}"/tmp/sockets
     state: directory
     mode: '0755'
 
