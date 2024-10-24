@@ -7,7 +7,7 @@
 
 - name: Create directory for socket
   file:
-    path: "{{ app_dir }}"/tmp/sockets
+    path: "{{ app_dir }}/tmp/sockets"
     state: directory
     mode: '0755'
 
