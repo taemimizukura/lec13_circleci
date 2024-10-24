@@ -69,6 +69,7 @@
 
 - name: Change ownership of /usr/local/bin to ec2-user
   ansible.builtin.command: chown ec2-user:ec2-user /usr/local/bin
+  become: yes
   ignore_errors: yes
 
 - name: install libvips
@@ -80,6 +81,7 @@
 
 - name: Revert ownership of /usr/local/bin to root
   ansible.builtin.command: chown root:root /usr/local/bin
+  become: yes
   ignore_errors: yes
 
 #実行準備
@@ -97,10 +99,18 @@
     chdir: "{{ app_dir }}"
   ignore_errors: yes
 
-- name: 'Run database migration'
-  command: bundle exec rake db:migrate
+- name: Create database if it does not exist
+  ansible.builtin.command: bundle exec rake db:create
   args:
     chdir: "{{ app_dir }}"
+  become: yes
+  ignore_errors: yes
+
+- name: Run database migration
+  ansible.builtin.command: bundle exec rake db:migrate
+  args:
+    chdir: "{{ app_dir }}"
+  become: yes
   ignore_errors: yes
 
 - name: 'bin/setup'
