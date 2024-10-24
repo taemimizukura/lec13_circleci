@@ -67,10 +67,9 @@
     chdir: /home/ec2-user/libvips/build
   environment:
     PATH: "/home/ec2-user/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
-    PYTHONPATH: "/home/ec2-user/.local/lib/python3.7/site-packages"  # ここを設定
+    PYTHONPATH: "/home/ec2-user/.local/lib/python3.7/site-packages"
   become: yes 
   ignore_errors: yes
-
 
 #実行準備
 - name: Run bundle install
