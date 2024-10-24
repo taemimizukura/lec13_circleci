@@ -13,7 +13,12 @@
   shell: sh /tmp/yarn-installer.sh
 
 - name: Add Yarn to PATH
-  shell: echo 'export PATH="$PATH:$HOME/.yarn/bin"' >> ~/.bashrc
+  lineinfile:
+    path: ~/.bashrc
+    regexp: 'export PATH="\$PATH:\$HOME/.yarn/bin"'
+    line: 'export PATH="$PATH:$HOME/.yarn/bin"'
+    insertafter: EOF
+    state: present
 
 - name: Ensure .bashrc is sourced
   shell: source ~/.bashrc

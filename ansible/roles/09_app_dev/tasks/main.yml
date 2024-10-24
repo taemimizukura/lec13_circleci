@@ -67,11 +67,6 @@
     chdir: /home/ec2-user/libvips/build
   ignore_errors: yes
 
-- name: Change ownership of /usr/local/bin to ec2-user
-  ansible.builtin.command: chown ec2-user:ec2-user /usr/local/bin
-  become: yes
-  ignore_errors: yes
-
 - name: install libvips
   shell: bash -lc "meson install"
   args:
@@ -79,10 +74,6 @@
   become: yes 
   ignore_errors: yes
 
-- name: Revert ownership of /usr/local/bin to root
-  ansible.builtin.command: chown root:root /usr/local/bin
-  become: yes
-  ignore_errors: yes
 
 #実行準備
 - name: Run bundle install
